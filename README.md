@@ -51,9 +51,11 @@ This part must be filled by participants with the technical clarifications about
 3. With our components installed, our team moved onto creating our main platform for the car on which the __Raspberry Pi 4 Model B__, __Hiwonder Pi Expansion Board__, and __GeeekPi Pi Fan__ will sit on, as well as a tower that will house the __SainSmart MIPI CSI Fisheye Camera Module__. After brainstorming methods to create the platform and tower, we ultimately decided upon 3D printing it using PETG filament, thus ensuring a lightweight and durable product.
    * The main platform is a flat rectangle with a raised border on 2 sides and 4 mounting holes near each corner. It sits on top of our car chassis and is secured by fitting the mounting holes onto rods that stick up vertically on the car's chassis. The __Raspberry Pi 4 Model B__ is attached to the platform using the board's mounting holes and 4 small cylinders on the platform. On the left side of the platform, there is a rectangular box which the __GeeekPi Pi Fan__ can snap into.
    * The camera tower sits on the back of the platform and is secured through screws on the bottom of the platform. We then screwed in the __SainSmart MIPI CSI Fisheye Camera Module__ to the tower, which guarantees a tight fit.
-4. Our final step was to connect all the wiring from the components to the Raspberry Pi and __Gens ACE 1300mAh LiPo Battery__, as well as wire management using electrical tape to make certain that no loose wiring would cause problems for our car. 
+4. Our final step was to connect all the wiring from the components to the Raspberry Pi and __Gens ACE 1300mAh LiPo Battery__, as well as wire management using electrical tape to make certain that no loose wiring would cause problems for our car.
 
+## Code Overview
+PLACEHOLDER 
 
-
-
+## Building/Compiling/Uploading Process
+All code for open challenge and obstacle challenge was built using Python. Our programs are coded and saved directly onto our Raspberry Pi. 
 
