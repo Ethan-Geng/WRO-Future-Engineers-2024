@@ -43,7 +43,16 @@ This part must be filled by participants with the technical clarifications about
   * The Furitek brushless motor works with the spur gear in our car chassis to drive the wheels. It has a lightweight but powerful design that provides smooth driving with great speed, high torque, and zero cogging. We chose to use a brushless motor because of the increased efficiency due to the eliminaton of brushes which create friction, greater reliablilty, and overall improved performance compared to a brushed motor. 
 
 * __Gens ACE 1300mAh LiPo Battery ([Link](https://www.adrenalinehobby.com/products/gens-ace-g-tech-1300mah-2s-7-4v-25c-lipo-deans-plug?_pos=1&_sid=dde29d30b&_ss=r))__
-  * This LiPo batery provides power for the entire circuit/car system, including the servo motor, Raspberry Pi, and brushless motor. It's high 1300mAh capacity allows our car and program to run for an extended period of time, which helps during testing and improves reliability during competition. 
+  * This LiPo batery provides power for the entire circuit/car system, including the servo motor, Raspberry Pi, and brushless motor. It's high 1300mAh capacity allows our car and program to run for an extended period of time, which helps during testing and improves reliability during competition.
+
+## Hardware Assembly and Design Process
+1. Our first step in our build process was to open up and strip down the __Carisma Puma Hybrid Rally RC Car 1/24 AWD__ to its chassis and remove all the components we did not need. This included taking out the built-in servo motor, the brushed motor, the battery connection, and remote control circuit board. 
+2. Now with a base chassis, we were able to install our own components including the __Micro Servo Motor__ and __Furitek Komodo Micro Brushless Motor + ESC__. Replacing the RC car's original servo motor and brushed motor was a key step in our process as it allowed us to use programmable and higher quality components. We made physical modifications to the chassis by cutting the plastic body using an exacto knife to ensure that our new components would fit seamlessly.
+3. With our components installed, our team moved onto creating our main platform for the car on which the __Raspberry Pi 4 Model B__, __Hiwonder Pi Expansion Board__, and __GeeekPi Pi Fan__ will sit on, as well as a tower that will house the __SainSmart MIPI CSI Fisheye Camera Module__. After brainstorming methods to create the platform and tower, we ultimately decided upon 3D printing it using PETG filament, thus ensuring a lightweight and durable product.
+   * The main platform is a flat rectangle with a raised border on 2 sides and 4 mounting holes near each corner. It sits on top of our car chassis and is secured by fitting the mounting holes onto rods that stick up vertically on the car's chassis. The __Raspberry Pi 4 Model B__ is attached to the platform using the board's mounting holes and 4 small cylinders on the platform. On the left side of the platform, there is a rectangular box which the __GeeekPi Pi Fan__ can snap into.
+   * The camera tower sits on the back of the platform and is secured through screws on the bottom of the platform. We then screwed in the __SainSmart MIPI CSI Fisheye Camera Module__ to the tower, which guarantees a tight fit.
+4. Our final step was to connect all the wiring from the components to the Raspberry Pi and __Gens ACE 1300mAh LiPo Battery__, as well as wire management using electrical tape to make certain that no loose wiring would cause problems for our car. 
+
 
 
 
