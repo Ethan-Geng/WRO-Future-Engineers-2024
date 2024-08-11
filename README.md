@@ -54,7 +54,9 @@ This part must be filled by participants with the technical clarifications about
 4. Our final step was to connect all the wiring from the components to the Raspberry Pi and __Gens ACE 1300mAh LiPo Battery__, as well as wire management using electrical tape to make certain that no loose wiring would cause problems for our car.
 
 ## Code Overview
-PLACEHOLDER 
+Both the code for Open Challenge and Obstacle Challenge follow similar sequential program logic, with the key differences being in their main loop. The general program structure for these two challenges is as follows:
+
+1. 
 
 ## Building/Compiling/Uploading Process
 All code for open challenge and obstacle challenge was built using Python. Our programs are coded and saved directly onto our Raspberry Pi. 
