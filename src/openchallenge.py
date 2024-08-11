@@ -8,11 +8,9 @@ from picamera2 import Picamera2
 Board.setPWMServoPulse(5, 1500, 100) #Arm ESC
 Board.setPWMServoPulse(1, 1500, 10) #Set Servo to 90
 time.sleep(6)
-leftTurns=0
-rightTurns=0
-clockwise=False
-counterClockwise=False
-turning=False
+frames=0
+count=0
+endFrames = 0
 
 #Camera setup
 picam2=Picamera2()
@@ -85,97 +83,83 @@ if __name__ == '__main__':
             cv2.drawContours(subim2, contours2, i, (0, 255, 0), 2) #drawing largest right contour
         cv2.imshow("contours2", im)
         
+        print("TURN COUNT:", count)
         
-        if leftarea < 100:
-            counterClockwise=True
-            clockwise=False
+        if leftarea < 250: #Sharp turn left
+            Board.setPWMServoPulse(1,1832, 1)
+            print("TURNING LEFT")
+            frames+=1
+            print("frames:",frames)
+            if frames>55:
+                count+=1
+                frames=0
+                    
+        elif rightarea < 250: #Sharp turn right
+            Board.setPWMServoPulse(1,955,1)
+            print("TURNING RIGHT")
+            frames+=1
+            print("frames:",frames)
+            if frames>55:
+                    count+=1
+                    frames=0
             
-        if rightarea < 100:
-            clockwise=True
-            counterClockwise=False
-            
-        if counterClockwise = True:
-            
-        
-        #Steering
-        if (leftarea >= rightarea): #Left wall is bigger
-            rightTurnStart=time.time()
-            difference = leftarea-rightarea
-            lastdifference = 0
-            t=time.time()
-            print('angle is:',angle)
-            if angle>=38:
-                rightTurns+=1
-            print("right Turns:",rightTurns)
-#             print('rightturn start:', rightTurnStart)
-#             elapsed=t-rightTurnStart
-#             print(elapsed)
-#             if elapsed>=2:
-#                 elapsed-=elapsed
-#                 print('new:',elapsed)
-
+        else: 
+            print("PD ACTIVATED")
+            #Steering
+            if (leftarea >= rightarea): #Left wall is bigger
+                rightTurnStart=time.time()
+                difference = leftarea-rightarea
+                lastdifference = 0
+                print('angle is:',angle)
+                    
                 
+                #Turning Right
+                if angle >= 40 and (0<=difference<=500):
+                    steeringRightAngle = 0*difference
+                    angle -=(steeringRightAngle)
+                    pw = 11.1 * angle + 500
+                    pw = int(pw)
+                    Board.setPWMServoPulse(1, pw, 1)
+                    lastdifference = difference
+                elif angle >=40 and difference>500:
+                    steeringRightAngle = 0.002*difference+0.000*(difference-lastdifference)
+                    angle -=(steeringRightAngle)
+                    pw = 11.1 * angle + 500
+                    pw = int(pw)
+                    Board.setPWMServoPulse(1, pw, 1)
+                    print('steering right angle:', steeringRightAngle)
+                    lastdifference = difference
                 
+            elif (rightarea >= leftarea): #Right wall is bigger
+                difference = rightarea-leftarea
+                lastdifference = 0
                 
+                #Turning Left
+                if (angle <= 120) and (0<=difference<=500):
+                    steeringRightAngle = 0*difference
+                    angle -=(steeringRightAngle)
+                    pw = 11.1 * angle + 500
+                    pw = int(pw)
+                    Board.setPWMServoPulse(1, pw, 1)
+                    lastdifference = difference
+                elif angle <=120 and difference>500:
+                    steeringLeftAngle = 0.002*difference+0.000*(difference-lastdifference)
+                    angle +=(steeringLeftAngle)
+                    pw = 11.1 * angle + 500
+                    pw = int(pw)
+                    Board.setPWMServoPulse(1, pw, 1)
+                    print('steering left angle:', steeringLeftAngle)
+                    lastdifference = difference
+    
+        if count==12: #all turns have been completed
+            endFrames+=1
             
-            #Turning Right
-            if angle >= 40 and (0<=difference<=500):
-                steeringRightAngle = 0*difference
-                angle -=(steeringRightAngle)
-                pw = 11.1 * angle + 500
-                pw = int(pw)
-                Board.setPWMServoPulse(1, pw, 1)
-                print('1')
-                lastdifference = difference
-            elif angle >=40 and difference>500:
-                steeringRightAngle = 0.002*difference+0.000*(difference-lastdifference)
-                angle -=(steeringRightAngle)
-                pw = 11.1 * angle + 500
-                pw = int(pw)
-                Board.setPWMServoPulse(1, pw, 1)
-                print('steering right angle:', steeringRightAngle)
-                lastdifference = difference
-#             if (angle >= 40):
-#                 angle -= 1
-#                 pw = 11.1 * angle + 500
-#                 pw = int(pw)
-#                 Board.setPWMServoPulse(1, pw, 1)
-#                 time.sleep(0.1)
+            if endFrames > 100: #counting frames to ensure robot ends in correct place
+                Board.setPWMServoPulse(5,1500,100) #Stopping the motor
+                Board.setPWMServoPulse(1,1500,100) #Straightening wheels
+                break
             
-        elif (rightarea >= leftarea): #Right wall is bigger
-            difference = rightarea-leftarea
-            lastdifference = 0
-            leftTurnStart=time.time()
-            print("left Turns:",leftTurns)
-            
-            if leftTurnStart - time.time() >= 2:
-                leftTurns += 1
-                leftTurnStart=None
-                print(5)
-            
-            #Turning Left
-            if (angle <= 120) and (0<=difference<=500):
-                steeringRightAngle = 0*difference
-                angle -=(steeringRightAngle)
-                pw = 11.1 * angle + 500
-                pw = int(pw)
-                Board.setPWMServoPulse(1, pw, 1)
-                print('1')
-                lastdifference = difference
-            elif angle <=120 and difference>500:
-                steeringLeftAngle = 0.002*difference+0.000*(difference-lastdifference)
-                angle +=(steeringLeftAngle)
-                pw = 11.1 * angle + 500
-                pw = int(pw)
-                Board.setPWMServoPulse(1, pw, 1)
-                print('steering left angle:', steeringLeftAngle)
-                lastdifference = difference
-#                 angle += 1
-#                 pw = 11.1 * angle + 500
-#                 pw = int(pw)
-#                 Board.setPWMServoPulse(1, pw, 1)
-#                 time.sleep(0.1)
-            
+    
         if cv2.waitKey(1)==ord('q'): #wait until 'q' is pressed
             Board.setPWMServoPulse(5,1500,100)
             Board.setPWMServoPulse(1,1500,100)
