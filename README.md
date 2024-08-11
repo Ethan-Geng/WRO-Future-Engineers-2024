@@ -56,8 +56,13 @@ This part must be filled by participants with the technical clarifications about
 ## Code Overview
 Both the code for Open Challenge and Obstacle Challenge follow similar sequential program logic, with the key differences being in their main loop. The general program structure for these two challenges is as follows:
 
-1. 
+1. Initializing Variables
+   * Initializes variables responsible for 
+3. Camera Setup
+4. Main Loop
 
+To program our self-driving car's "vision", our team utilized OpenCV
+   
 ## Building/Compiling/Uploading Process
 All code for open challenge and obstacle challenge was built using Python. Our programs are coded and saved directly onto our Raspberry Pi. 
 
