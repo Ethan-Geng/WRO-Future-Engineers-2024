@@ -57,12 +57,34 @@ This part must be filled by participants with the technical clarifications about
 Both the code for Open Challenge and Obstacle Challenge follow similar sequential program logic, with the key differences being in their main loop. The general program structure for these two challenges is as follows:
 
 1. Initializing Variables
-   * Initializes variables responsible for 
+   * Initializes variables responsible for counting turns, image processing, and contour detection 
+2. Servo/Motor Setup
+   * Straightening car tires and preparing motor 
 3. Camera Setup
-4. Main Loop
+   * Setting camera resolution and framerate
+4. Main Loop (See below sections)
 
-To program our self-driving car's "vision", our team utilized OpenCV
-   
+To program our self-driving car's "vision" and camera operations, our team utilized OpenCV. Other libraries we used include: Time for programming delays; PiCamera2 for controlling our camera; and HiwonderSDK for operating our Raspberry Pi Hat. 
+
+## Open Challenge Main Loop Overview 
+The main loop for Open Challenge can be broken down into 4 sections:
+
+* __Image Processing & Contour Detection__
+   * First, the camera captures the left and right wall Region of Interest (ROI) subimages as arrays. Following this, the 
+
+
+* __Wall Following__
+
+
+* __Counting Turns__
+
+
+* __Program Termination__
+
+
+## Obstacle Challenge Main Loop Overview
+...   
+
 ## Building/Compiling/Uploading Process
 All code for open challenge and obstacle challenge was built using Python. Our programs are coded and saved directly onto our Raspberry Pi. 
 
