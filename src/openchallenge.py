@@ -12,6 +12,11 @@ frames=0
 count=0
 endFrames = 0
 
+leftarea=0
+leftcontourindex=0
+rightarea=0
+rightcontourindex = 0
+
 #Camera setup
 picam2=Picamera2()
 picam2.preview_configuration.main.size = (640,480)
@@ -53,8 +58,6 @@ if __name__ == '__main__':
         imgGray = cv2.cvtColor(subim, cv2.COLOR_BGR2GRAY)
         ret, imgThresh = cv2.threshold(imgGray, 60, 255, cv2.THRESH_BINARY_INV)
         contours, hierarchy = cv2.findContours(imgThresh,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        leftarea=0
-        leftcontourindex=0
         for i in range(len(contours)): #finding largest contour
             cnt = contours[i]
             leftarea = cv2.contourArea(cnt)
@@ -70,8 +73,6 @@ if __name__ == '__main__':
         imgGray2 = cv2.cvtColor(subim2, cv2.COLOR_BGR2GRAY)
         ret2, imgThresh2 = cv2.threshold(imgGray2, 60, 255, cv2.THRESH_BINARY_INV)
         contours2, hierarchy2 = cv2.findContours(imgThresh2,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        rightarea=0
-        rightcontourindex = 0
         for i in range(len(contours2)):
             cnt2 = contours2[i]
             rightarea = cv2.contourArea(cnt2)
