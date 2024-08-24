@@ -7,7 +7,7 @@ from picamera2 import Picamera2
 import RPi.GPIO as GPIO 
 
 Board.setPWMServoPulse(5, 1500, 100) #Arm ESC
-Board.setPWMServoPulse(1, 1500, 10) #Set Servo to 90
+Board.setPWMServoPulse(1, 1444, 10) #Set Servo to 85
 time.sleep(6)
 frames=0
 count=0
@@ -17,8 +17,13 @@ turning = False
 turnDirection = None
 PD = False
 
+difference = 0
+lastdifference = 0
+
 displayLeftArea = 0
 displayRightArea = 0
+displayTurnCount = 0
+displayTurning = 'PD Controller'
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -52,7 +57,7 @@ if __name__ == '__main__':
     Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
     Board.RGB.show()
     
-    angle = 90
+    angle = 85.045
     pw_Servo = angle * 11.1 + 500
     Board.setPWMServoPulse(5,1315,100) #Speed
     while True:
@@ -94,7 +99,7 @@ if __name__ == '__main__':
 #             print('Left wall: ',leftarea) #Displaying left contour area
             cv2.drawContours(subim, contours, i, (0, 255, 0), 2) #drawing left largest contour
             displayLeftArea = str(int(leftarea))
-            cv2.putText(im, displayLeftArea, (7, 70), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
+            cv2.putText(im, displayLeftArea, (7, 250), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
     
         #Right Wall
         imgGray2 = cv2.cvtColor(subim2, cv2.COLOR_BGR2GRAY) #Grayscaling preperation
@@ -109,16 +114,22 @@ if __name__ == '__main__':
 #             print('Right Wall: ',rightarea) #displaying right contour area
             cv2.drawContours(subim2, contours2, i, (0, 255, 0), 2) #drawing largest right contour
             displayRightArea = str(int(rightarea))
-            cv2.putText(im, displayRightArea, (400, 70), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
+            cv2.putText(im, displayRightArea, (450, 250), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
 #         cv2.imshow("contours2", im)
         
         print("TURN COUNT:", count)
+        print("Turning?:", turning)
+        print("Turn Direction:", turnDirection)
+        
+        displayTurnCount = str(int(count))
+        cv2.putText(im, displayTurnCount, (560, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
+        
+        cv2.putText(im, displayTurning, (7, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
         
         if not turning: 
             if leftarea < 100: #Sharp turn left
                 turning = True
                 turnDirection = 'left'
-                PD = False
                 print("TURNING LEFT")
                         
             elif rightarea < 100: #Sharp turn right
@@ -130,7 +141,8 @@ if __name__ == '__main__':
             Board.setPWMServoPulse(1,1832, 1)
             frames += 1
             print("frames:",frames)
-            if frames>75:
+            displayTurning = 'Turning Left'
+            if frames>35:
                 count+=1
                 frames=0
                 
@@ -138,64 +150,37 @@ if __name__ == '__main__':
             Board.setPWMServoPulse(1,955, 1)
             frames += 1
             print("frames:",frames)
-            if frames>75:
+            displayTurning = 'Turning Right'
+            if frames>35:
                 count+=1
                 frames=0
         
-        if turning == True and leftarea > 150 and rightarea > 150:
+        if turning == True and leftarea > 250 and rightarea > 250:
             turning = False
             turnDirection = None
+            lastdifference = 0
             
         if not turning and turnDirection == None:
+            #PD CONTROLLER 
             print("PD ACTIVATED")
-            #Steering / PD Controller 
-            if (leftarea >= rightarea): #Left wall is bigger
-                difference = leftarea-rightarea
-                lastdifference = 0
-                print('angle is:',angle)
-                
-                #Turning Right
-                if angle >= 40 and (0<=difference<=750):
-                    steeringRightAngle = 0*difference
-                    angle -=(steeringRightAngle)
-                    pw = 11.1 * angle + 500
-                    pw = int(pw)
-                    Board.setPWMServoPulse(1, pw, 1)
-                    lastdifference = difference
-                elif angle >=40 and difference>750:
-                    steeringRightAngle = 0.0001*difference+0.01*(difference-lastdifference)
-                    angle -=(steeringRightAngle)
-                    pw = 11.1 * angle + 500
-                    pw = int(pw)
-                    Board.setPWMServoPulse(1, pw, 1)
-                    print('steering right angle:', steeringRightAngle)
-                    lastdifference = difference
-                
-            elif (rightarea >= leftarea): #Right wall is bigger
-                difference = rightarea-leftarea
-                lastdifference = 0
-                
-                #Turning Left
-                if (angle <= 120) and (0<=difference<=750):
-                    steeringRightAngle = 0*difference
-                    angle -=(steeringRightAngle)
-                    pw = 11.1 * angle + 500
-                    pw = int(pw)
-                    Board.setPWMServoPulse(1, pw, 1)
-                    lastdifference = difference
-                elif angle <=120 and difference>750:
-                    steeringLeftAngle = 0.0001*difference+0.01*(difference-lastdifference)
-                    angle +=(steeringLeftAngle)
-                    pw = 11.1 * angle + 500
-                    pw = int(pw)
-                    Board.setPWMServoPulse(1, pw, 1)
-                    print('steering left angle:', steeringLeftAngle)
-                    lastdifference = difference
+            displayTurning = 'PD Controller'
+            difference = rightarea - leftarea
+            correction = 0.005 * difference + 0.001 * (difference - lastdifference)
+            angle = 85.045 + correction
+            
+            if angle > 120:
+                angle = 120
+            elif angle < 40:
+                angle = 40
+            
+            pw = int(11.1 * angle + 500)
+            Board.setPWMServoPulse(1, pw, 1)
+            lastdifference = difference
     
         if count>=12: #all turns have been completed
             endFrames+=1
             
-            if endFrames > 75: #counting frames to ensure robot ends in correct place
+            if endFrames > 85: #counting frames to ensure robot ends in correct place
                 Board.setPWMServoPulse(5,1500,100) #Stopping the motor
                 Board.setPWMServoPulse(1,1500,100) #Straightening wheels
                 break #exiting loop 
@@ -205,7 +190,7 @@ if __name__ == '__main__':
         
             if cv2.waitKey(1)==ord('q'):
                 Board.setPWMServoPulse(5,1500,100)
-                Board.setPWMServoPulse(1,1500,100)
+                Board.setPWMServoPulse(1,1444,100)
                 cv2.destroyAllWindows()
                 break
         
