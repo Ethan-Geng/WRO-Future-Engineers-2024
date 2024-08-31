@@ -22,14 +22,20 @@ This repository contains the engineering process of Team EAK's self-driven vehic
 * __Carisma Puma Hybrid Rally RC Car 1/24 AWD ([Link](https://carisma-shop.com/products/gt24-m-sport-2022-puma-hybrid-rally1))__
   * Equipped with a lightweight chassis, high traction tires, and effective friction dampeners, this RC car serves as a perfect base for our team to construct our self-driving car using. With the addition of the parking lot in this year's competition, we chose this 1/24th scale size as its dimensions allow us to effectively utilize back-in parking, as opposed to parallel parking. This not only saves time, but minimizes chances of error during our parking phase of Obstacle Challenge. 
 
+![Rally Car Chassis](https://carisma-shop.com/cdn/shop/products/87868_12.jpg?v=1673246397)
+
 * __Raspberry Pi 4 Model B ([Link](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/))__
   * We chose the Raspberry Pi to act as the brain of the entire car. The code on the board handles all computing aspects, including the image processing and control signals. It's 64-bit quad-core processor coupled with 8GB of Random Access Memory (RAM) ensures fast processing of our code. 
+
+![Raspberry Pi 4 Model B](https://canada.newark.com/productimages/large/en_US/02AH3161-40.jpg)
 
 * __Hiwonder Pi Expansion Board (N/A)__
   * Compact and practical, the expansion board stacks on top of our Raspberry Pi board and is attached using the board's universal input/output pins. This expansion board allows for easy connections for our servo motor, brushless motor, and Pi fan. 
 
 * __SainSmart MIPI CSI Fisheye Camera Module ([Link](https://www.sainsmart.com/products/noir-wide-angle-fov160-5-megapixel-camera-module))__
   * This CSI camera conveniently connects to our Raspberry Pi board's camera module port and offers a wide 160 degree viewing angle with great 5MP resolution, colour quality, and a high frame rate. This camera is responsible for detecting walls, obstacles, and lines. 
+
+![MIPI Camera](https://www.sainsmart.com/cdn/shop/products/2_78_2_1024x1024.jpg?v=1499267387)
 
 * __Micro Servo Motor ([Link](https://ca.robotshop.com/products/hs-5055mg-metal-gear-micro-servo-motor?srsltid=AfmBOopv8Z7LoCVOEqe16w05ZV-R78dNmy7dappldIxZiQzCJroxcssFc2Y))__
   * This programmable micro servo motor allows our team to precisely control the steering angle of our car. It's compact and lightweight design ensures that it can fit perfectly within our car chassis. 
