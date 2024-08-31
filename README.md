@@ -1,9 +1,7 @@
-Documentation l Explorer Robotics l Team EAK
+Documentation l Explorer Robotics l Team French Fries
 ====
 ## Introduction
 This repository contains the engineering process of Team EAK's self-driven vehicle's model participating in the WRO Future Engineers competition in the season 2024. Included in the repository are materials used, schematics, pictures, and software.
-
-This part must be filled by participants with the technical clarifications about the code: which modules the code consists of, how they are related to the electromechanical components of the vehicle, and what is the process to build/compile/upload the code to the vehicle’s controllers.
 
 ## Team Members
 * Ethan Geng (EMAIL: ethan.geng7@gmail.com)
@@ -50,37 +48,39 @@ This part must be filled by participants with the technical clarifications about
 2. Now with a base chassis, we were able to install our own components including the __Micro Servo Motor__ and __Furitek Komodo Micro Brushless Motor + ESC__. Replacing the RC car's original servo motor and brushed motor was a key step in our process as it allowed us to use programmable and higher quality components. We made physical modifications to the chassis by cutting the plastic body using an exacto knife to ensure that our new components would fit seamlessly.
 3. With our components installed, our team moved onto creating our main platform for the car on which the __Raspberry Pi 4 Model B__, __Hiwonder Pi Expansion Board__, and __GeeekPi Pi Fan__ will sit on, as well as a tower that will house the __SainSmart MIPI CSI Fisheye Camera Module__. After brainstorming methods to create the platform and tower, we ultimately decided upon 3D printing it using PETG filament, thus ensuring a lightweight and durable product.
    * The main platform is a flat rectangle with a raised border on 2 sides and 4 mounting holes near each corner. It sits on top of our car chassis and is secured by fitting the mounting holes onto rods that stick up vertically on the car's chassis. The __Raspberry Pi 4 Model B__ is attached to the platform using the board's mounting holes and 4 small cylinders on the platform. On the left side of the platform, there is a rectangular box which the __GeeekPi Pi Fan__ can snap into.
-   * The camera tower sits on the back of the platform and is secured through screws on the bottom of the platform. We then screwed in the __SainSmart MIPI CSI Fisheye Camera Module__ to the tower, which guarantees a tight fit.
-4. Our final step was to connect all the wiring from the components to the Raspberry Pi and __Gens ACE 1300mAh LiPo Battery__, as well as wire management using electrical tape to make certain that no loose wiring would cause problems for our car.
+   * The camera tower sits on the back of the platform and is secured through screws on the bottom of the platform. We then screwed in the __SainSmart MIPI CSI Fisheye Camera Module__ to the tower, which guarantees a tight fit. Additionally, we added velcro to the back of the camera tower to house our __Gens ACE 1300mAh LiPo Battery__.
+4. Our final step was to connect all the wiring from the components to the Raspberry Pi and __Gens ACE 1300mAh LiPo Battery__, as well as wire management using electrical tape, 3M Command Strips, and Velcro to make certain that no loose wiring would cause problems for our car.
 
 ## Code Overview
 Both the code for Open Challenge and Obstacle Challenge follow similar sequential program logic, with the key differences being in their main loop. The general program structure for these two challenges is as follows:
 
 1. Initializing Variables
-   * Initializes variables responsible for counting turns, image processing, and contour detection 
+   * Initializes variables responsible for turning, image processing, troubleshooting, turn/lap counting, and contour detection 
 2. Servo/Motor Setup
-   * Straightening car tires and preparing motor 
+   * Straightening car tires and preparing motor
 3. Camera Setup
-   * Setting camera resolution and framerate
-4. Main Loop (See below sections)
+   * Setting camera resolution and framerate for capturing image
+4. Push Button Start
+   * Waits until a push button is pressed before starting the main loop (uses a white LED as a ready indicator)
+5. Main Loop (See below sections)
 
-To program our self-driving car's "vision" and camera operations, our team utilized OpenCV. Other libraries we used include: Time for programming delays; PiCamera2 for controlling our camera; and HiwonderSDK for operating our Raspberry Pi Hat. 
+To program our self-driving car's "vision" and camera operations, our team utilized OpenCV. Other libraries we used include: Time for programming delays; PiCamera2 for controlling our camera; RPi.GPIO for push button start; numpy for image processing; and HiwonderSDK for operating our Raspberry Pi Hat. 
 
 ## Open Challenge Main Loop Overview 
-The main loop for Open Challenge can be broken down into 4 sections:
+The main loop for Open Challenge can be broken down into 4 main sections:
 
 * __Image Processing & Contour Detection__
-   * First, the camera captures the left and right wall Region of Interest (ROI) subimages as arrays. Following this, the 
-
+   * First, the camera captures the left wall, right wall, and floor Region of Interest (ROI) subimages as arrays. For the left and right wall ROI, various image processes including grayscaling and thresholding are conducted to prepare for contour detection, a computer vision technique which detects the edges/boundaries of an object. Similarily, the floor ROI is prepared for contour detection through a BGR (Blue, Green, Red) to HSV (Hue, Saturation, Value) colour conversion, colour thresholds, and a colour mask. Following these processes, the right wall, left wall, and orange line contours are found, as well as their areas'. This information is instrumental in the following processes of the program.
 
 * __Wall Following__
+   * Our vehicle uses a Proportional-Derivative (PD) Controller, a simplified version of the common Proportional-Integral-Derivative (PID) controller. The proportional term of the controller produces outputs based on the current error between the system's desired position (the exact middle of the two walls) and its actual position. In our case, the error is calculated to be the difference in area between the left and right wall. If the difference in area is large (e.g the vehicle is next to the right wall), the controller will produce a strong output (e.g. turning sharply left). The derivative term of the controller measures the rate of change of the error to "predict the future". Using this information, it can "dampen" the system's response to reduce oscillations and overshoots. In our case, the derivative is calculated as the difference between the current error and the previous error.
 
-
-* __Counting Turns__
+* __Vehicle Turning and Lap Counting__
+   * To turn, our vehicle uses the areas of the left and right wall. If it detects that the area of the right wall suddenly drops below a certain threshold, it will disable its PD controller and conduct a sharp right turn. Similarily, if the left wall's area drops below the threshold, it will turn sharply left. The turn will continue until the vehicle detects that both walls are again above a certain threshold. As a preventative measure, our program uses a "turn buffer" that ensures that the turn lasts for at least 7 frames before ending. This prevents unwanted disruptions to the turn. To count its turns, the vehicle uses the floor ROI to detect the orange line. If the vehicle detects the orange line, it will add to its turn counts. 
 
 
 * __Program Termination__
-
+   * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for 85 frames/almost 3 seconds (to ensure it stops in the correct area) before stopping and exiting the main loop.
 
 ## Obstacle Challenge Main Loop Overview
 ...   
