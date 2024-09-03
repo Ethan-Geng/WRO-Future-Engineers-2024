@@ -1,7 +1,7 @@
 Documentation l Explorer Robotics l Team French Fries
 ====
 ## Introduction
-This repository contains the engineering process of Team EAK's self-driven vehicle's model participating in the WRO Future Engineers competition in the season 2024. Included in the repository are materials used, schematics, pictures, and software.
+This repository contains the engineering process of Team French Fries' self-driven vehicle's model participating in the WRO Future Engineers competition in the season 2024. Included in the repository are materials used, schematics, pictures, and software.
 
 ## Team Members
 * Ethan Geng (EMAIL: ethan.geng7@gmail.com)
@@ -91,7 +91,6 @@ The main loop for Open Challenge can be broken down into 4 main sections:
 
 * __Vehicle Turning and Lap Counting__
    * To turn, our vehicle uses the areas of the left and right wall. If it detects that the area of the right wall suddenly drops below a certain threshold, it will disable its PD controller and conduct a sharp right turn. Similarily, if the left wall's area drops below the threshold, it will turn sharply left. The turn will continue until the vehicle detects that both walls are again above a certain threshold. As a preventative measure, our program uses a "turn buffer" that ensures that the turn lasts for at least 7 frames before ending. This prevents unwanted disruptions to the turn. To count its turns, the vehicle uses the floor ROI to detect the orange line. If the vehicle detects the orange line, it will add to its turn counts. 
-
 
 * __Program Termination__
    * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for 85 frames/almost 3 seconds (to ensure it stops in the correct area) before stopping and exiting the main loop.
