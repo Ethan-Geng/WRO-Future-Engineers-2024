@@ -24,50 +24,13 @@ This repository contains the engineering process of Team French Fries' self-driv
 |:----------|:----------|:----------|
 | __Carisma Puma Hybrid Rally RC Car 1/24 AWD ([Link](https://carisma-shop.com/products/gt24-m-sport-2022-puma-hybrid-rally1))__    | Equipped with a lightweight chassis, high traction tires, and effective friction dampeners, this RC car serves as a perfect base for our team to construct our self-driving car using. With the addition of the parking lot in this year's competition, we chose this 1/24th scale size as its dimensions allow us to effectively utilize back-in parking, as opposed to parallel parking. This not only saves time, but minimizes chances of error during our parking phase of Obstacle Challenge.     | ![Rally Car Chassis](https://carisma-shop.com/cdn/shop/products/87868_12.jpg?v=1673246397)    |
 | __Raspberry Pi 4 Model B ([Link](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/))__    | We chose the Raspberry Pi to act as the brain of the entire car. The code on the board handles all computing aspects, including the image processing and control signals. It's 64-bit quad-core processor coupled with 8GB of Random Access Memory (RAM) ensures fast processing of our code.     | ![Raspberry Pi 4 Model B](https://cdn.robotshop.com/media/r/ras/rb-ras-26/img/raspberry-pi-4-b-4g-computer-board-desc1.webp)    |
-| Cell 1    | Cell 2    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    |
+| __Hiwonder Pi Expansion Board (N/A)__    | Compact and practical, the expansion board stacks on top of our Raspberry Pi board and is attached using the board's universal input/output pins. This expansion board allows for easy connections for our servo motor, brushless motor, and Pi fan.    | N/A    |
+| __SainSmart MIPI CSI Fisheye Camera Module ([Link](https://www.sainsmart.com/products/noir-wide-angle-fov160-5-megapixel-camera-module))__    | This CSI camera conveniently connects to our Raspberry Pi board's camera module port and offers a wide 160 degree viewing angle with great 5MP resolution, colour quality, and a high frame rate. This camera is responsible for detecting walls, obstacles, and lines.    | ![MIPI Camera](https://www.sainsmart.com/cdn/shop/products/2_78_2_1024x1024.jpg?v=1499267387)    |
+| __Micro Servo Motor ([Link](https://ca.robotshop.com/products/hs-5055mg-metal-gear-micro-servo-motor?srsltid=AfmBOopv8Z7LoCVOEqe16w05ZV-R78dNmy7dappldIxZiQzCJroxcssFc2Y))__    | This programmable micro servo motor allows our team to precisely control the steering angle of our car. It's compact and lightweight design ensures that it can fit perfectly within our car chassis.    | ![Servo Motor](https://ca.robotshop.com/cdn/shop/files/hs-5055mg-metal-gear-micro-servo-motor-1.webp?v=1720506823&width=500)    |
+| __GeeekPi Pi Fan ([Link](https://www.amazon.ca/GeeekPi-Raspberry-Radiator-Aluminum-Heatsinks/dp/B07C9C99RM/ref=asc_df_B07C9C99RM/?tag=googleshopc0c-20&linkCode=df0&hvadid=579070369590&hvpos=&hvnetw=g&hvrand=2167868380151199729&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9000759&hvtargid=pla-995264935599&psc=1&mcid=ad78a1c125c23c7088cb21e5dde53480))__    | We decided to include this efficient fan to effectively cool and dissipate heat from our Raspberry Pi, which will help to mitigate thermal throttling and thereby improve performance under a heavy processing load. Our team found that the addition of this Pi fan can cool the Raspberry Pi up to 30 degrees celsius.    | ![Pi Fan](https://cdn.hepsiglobal.com/prod/media/5380/20230111/c4e31f24-b0c2-4e9c-9e52-d1a2d049156f.jpg)    |
+| __Furitek Komodo Micro Brushless Motor + ESC ([Link](https://furitek.com/products/furitek-stinger-brushless-power-system-for-scx24))__    | The Furitek brushless motor works with the spur gear in our car chassis to drive the wheels. It has a lightweight but powerful design that provides smooth driving with great speed, high torque, and zero cogging. We chose to use a brushless motor because of the increased efficiency due to the eliminaton of brushes which create friction, greater reliablilty, and overall improved performance compared to a brushed motor.    | ![Motor and ESC](https://www.bigboyswithcooltoys.ca/cdn/shop/files/FRU2102_A0_7UY8Y8Z9_x700.jpg?v=1705165760)    |
+| __Gens ACE 1300mAh LiPo Battery ([Link](https://www.adrenalinehobby.com/products/gens-ace-g-tech-1300mah-2s-7-4v-25c-lipo-deans-plug?_pos=1&_sid=dde29d30b&_ss=r))__    | This LiPo batery provides power for the entire circuit/car system, including the servo motor, Raspberry Pi, and brushless motor. It's high 1300mAh capacity allows our car and program to run for an extended period of time, which helps during testing and improves reliability during competition.    | ![LiPo Battery](https://m.media-amazon.com/images/I/61uJIdaLJUL._AC_UF894,1000_QL80_.jpg)    |
 
-* __Carisma Puma Hybrid Rally RC Car 1/24 AWD ([Link](https://carisma-shop.com/products/gt24-m-sport-2022-puma-hybrid-rally1))__
-  * Equipped with a lightweight chassis, high traction tires, and effective friction dampeners, this RC car serves as a perfect base for our team to construct our self-driving car using. With the addition of the parking lot in this year's competition, we chose this 1/24th scale size as its dimensions allow us to effectively utilize back-in parking, as opposed to parallel parking. This not only saves time, but minimizes chances of error during our parking phase of Obstacle Challenge. 
-
-![Rally Car Chassis](https://carisma-shop.com/cdn/shop/products/87868_12.jpg?v=1673246397)
-
-* __Raspberry Pi 4 Model B ([Link](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/))__
-  * We chose the Raspberry Pi to act as the brain of the entire car. The code on the board handles all computing aspects, including the image processing and control signals. It's 64-bit quad-core processor coupled with 8GB of Random Access Memory (RAM) ensures fast processing of our code. 
-
-![Raspberry Pi 4 Model B](https://cdn.robotshop.com/media/r/ras/rb-ras-26/img/raspberry-pi-4-b-4g-computer-board-desc1.webp)
-
-* __Hiwonder Pi Expansion Board (N/A)__
-  * Compact and practical, the expansion board stacks on top of our Raspberry Pi board and is attached using the board's universal input/output pins. This expansion board allows for easy connections for our servo motor, brushless motor, and Pi fan. 
-
-* __SainSmart MIPI CSI Fisheye Camera Module ([Link](https://www.sainsmart.com/products/noir-wide-angle-fov160-5-megapixel-camera-module))__
-  * This CSI camera conveniently connects to our Raspberry Pi board's camera module port and offers a wide 160 degree viewing angle with great 5MP resolution, colour quality, and a high frame rate. This camera is responsible for detecting walls, obstacles, and lines. 
-
-![MIPI Camera](https://www.sainsmart.com/cdn/shop/products/2_78_2_1024x1024.jpg?v=1499267387)
-
-* __Micro Servo Motor ([Link](https://ca.robotshop.com/products/hs-5055mg-metal-gear-micro-servo-motor?srsltid=AfmBOopv8Z7LoCVOEqe16w05ZV-R78dNmy7dappldIxZiQzCJroxcssFc2Y))__
-  * This programmable micro servo motor allows our team to precisely control the steering angle of our car. It's compact and lightweight design ensures that it can fit perfectly within our car chassis. 
-
-![Servo Motor](https://ca.robotshop.com/cdn/shop/files/hs-5055mg-metal-gear-micro-servo-motor-1.webp?v=1720506823&width=500)
- 
-* __GeeekPi Pi Fan ([Link](https://www.amazon.ca/GeeekPi-Raspberry-Radiator-Aluminum-Heatsinks/dp/B07C9C99RM/ref=asc_df_B07C9C99RM/?tag=googleshopc0c-20&linkCode=df0&hvadid=579070369590&hvpos=&hvnetw=g&hvrand=2167868380151199729&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9000759&hvtargid=pla-995264935599&psc=1&mcid=ad78a1c125c23c7088cb21e5dde53480))__
-  * We decided to include this efficient fan to effectively cool and dissipate heat from our Raspberry Pi, which will help to mitigate thermal throttling and thereby improve performance under a heavy processing load. Our team found that the addition of this Pi fan can cool the Raspberry Pi up to 30 degrees celsius. 
-
-![Pi Fan](https://cdn.hepsiglobal.com/prod/media/5380/20230111/c4e31f24-b0c2-4e9c-9e52-d1a2d049156f.jpg)
-
-* __Furitek Komodo Micro Brushless Motor + ESC ([Link](https://furitek.com/products/furitek-stinger-brushless-power-system-for-scx24))__
-  * The Furitek brushless motor works with the spur gear in our car chassis to drive the wheels. It has a lightweight but powerful design that provides smooth driving with great speed, high torque, and zero cogging. We chose to use a brushless motor because of the increased efficiency due to the eliminaton of brushes which create friction, greater reliablilty, and overall improved performance compared to a brushed motor. 
-
-![Motor and ESC](https://www.bigboyswithcooltoys.ca/cdn/shop/files/FRU2102_A0_7UY8Y8Z9_x700.jpg?v=1705165760)
-
-* __Gens ACE 1300mAh LiPo Battery ([Link](https://www.adrenalinehobby.com/products/gens-ace-g-tech-1300mah-2s-7-4v-25c-lipo-deans-plug?_pos=1&_sid=dde29d30b&_ss=r))__
-  * This LiPo batery provides power for the entire circuit/car system, including the servo motor, Raspberry Pi, and brushless motor. It's high 1300mAh capacity allows our car and program to run for an extended period of time, which helps during testing and improves reliability during competition.
-
-![LiPo Battery](https://m.media-amazon.com/images/I/61uJIdaLJUL._AC_UF894,1000_QL80_.jpg)
 
 ## Hardware Assembly and Design Process
 1. Our first step in our build process was to open up and strip down the __Carisma Puma Hybrid Rally RC Car 1/24 AWD__ to its chassis and remove all the components we did not need. This included taking out the built-in servo motor, the brushed motor, the battery connection, and remote control circuit board. 
