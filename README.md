@@ -19,6 +19,18 @@ This repository contains the engineering process of Team French Fries' self-driv
 * `other` is for other files which can be used to understand how to prepare the vehicle for the competition. It may include documentation how to connect to a SBC/SBM and upload files there, datasets, hardware specifications, communication protocols descriptions etc. If there is nothing to add to this location, the directory can be removed.
 
 ## Parts List & Design Choice
+
+| Part  | Description  | Photo  |
+|:----------|:----------|:----------|
+| __Carisma Puma Hybrid Rally RC Car 1/24 AWD ([Link](https://carisma-shop.com/products/gt24-m-sport-2022-puma-hybrid-rally1))__    | Equipped with a lightweight chassis, high traction tires, and effective friction dampeners, this RC car serves as a perfect base for our team to construct our self-driving car using. With the addition of the parking lot in this year's competition, we chose this 1/24th scale size as its dimensions allow us to effectively utilize back-in parking, as opposed to parallel parking. This not only saves time, but minimizes chances of error during our parking phase of Obstacle Challenge.     | ![Rally Car Chassis](https://carisma-shop.com/cdn/shop/products/87868_12.jpg?v=1673246397)    |
+| __Raspberry Pi 4 Model B ([Link](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/))__    | We chose the Raspberry Pi to act as the brain of the entire car. The code on the board handles all computing aspects, including the image processing and control signals. It's 64-bit quad-core processor coupled with 8GB of Random Access Memory (RAM) ensures fast processing of our code.     | ![Raspberry Pi 4 Model B](https://cdn.robotshop.com/media/r/ras/rb-ras-26/img/raspberry-pi-4-b-4g-computer-board-desc1.webp)    |
+| Cell 1    | Cell 2    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    |
+
 * __Carisma Puma Hybrid Rally RC Car 1/24 AWD ([Link](https://carisma-shop.com/products/gt24-m-sport-2022-puma-hybrid-rally1))__
   * Equipped with a lightweight chassis, high traction tires, and effective friction dampeners, this RC car serves as a perfect base for our team to construct our self-driving car using. With the addition of the parking lot in this year's competition, we chose this 1/24th scale size as its dimensions allow us to effectively utilize back-in parking, as opposed to parallel parking. This not only saves time, but minimizes chances of error during our parking phase of Obstacle Challenge. 
 
@@ -118,4 +130,3 @@ The main loop for Obstacle Challenge can be broken down into 6 main sections:
 
 ## Building/Compiling/Uploading Process
 All code for open challenge and obstacle challenge was built using Python. Our programs are coded and saved directly onto our Raspberry Pi. To do so, we used an application called Real VNC to remotely access our Raspberry Pi's graphical desktop. 
-
