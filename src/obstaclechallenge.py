@@ -11,32 +11,37 @@ Board.setPWMServoPulse(5, 1500, 100) #Arm ESC
 Board.setPWMServoPulse(1, 1444, 10) #Set Servo to 85
 time.sleep(6)
 
+#Tracking turns and termination variables
 frames=0
 count=0
 turn_around_count = 0
 endFrames = 0
-
 turning = False
 turnDirection = None
-PD = False
 turnBuffer = False
 orange_seen = False
 
+#Global Timer
 timer = 0
 
+#PD Controller Variables
 difference = 0
 lastdifference = 0
+PD = False
 
+#Troubleshooting / Displaying Info Variables
 displayLeftArea = 0
 displayRightArea = 0
 displayOrangeArea = 0
 displayTurnCount = 0
 displayTurning = 'PD Controller'
 
+#Pillar Maneuvering
 green_pillar_seen = False
 red_pillar_seen = False
 last_pillar = None
 
+#Turn Around Variables
 turn_around = False
 turn_around_frames = 0
 
@@ -53,6 +58,7 @@ picam2.start()
 if __name__ == '__main__':
     key2_pin = 16
     
+    #Key Press Startup
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(key2_pin, GPIO.IN, pull_up_down = GPIO.PUD_UP)
     
@@ -60,7 +66,7 @@ if __name__ == '__main__':
     Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
     Board.RGB.show()
     
-    # turn LED white
+    # turn LED white (indicator for start up)
     Board.RGB.setPixelColor(0, Board.PixelColor(255, 255, 255))
     Board.RGB.show()
     time.sleep(1)
@@ -72,12 +78,13 @@ if __name__ == '__main__':
     Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
     Board.RGB.show()
     
-    angle = 85.045
+    angle = 85.045 #Angle for straight wheels
     pw_Servo = angle * 11.1 + 500
-    Board.setPWMServoPulse(5,1323,100) #Speed
+    Board.setPWMServoPulse(5,1323,100) #Car Speed
     while True:
-        timer += 1
+        timer += 1 #Timer for counting turns
         
+        #Variables for left wall, right wall, orange line, green pillar, and red pillar area
         leftarea = 0
         leftcontourindex = 0
         rightarea = 0
@@ -92,30 +99,30 @@ if __name__ == '__main__':
         red_area = 0
         red_counter_index = 0
         
-        im = picam2.capture_array()
+        im = picam2.capture_array() #Capturing camera image as an array
         
         subim=im[280:345,0:200] #Setting left wall detection area
         subim2=im[280:345,440:640] #Setting right wall detection area
         subim3=im[425:465,180:480] #Setting orange line detection area
         pillar_subim = im[218:420,70:590]
     
-#         left_points = [(0,280), (200,280), (200,345), (0,345)]
-#         color = (0, 255, 255)
-#         thickness = 4
-#         image = cv2.line(im, left_points[0], left_points[1], color, thickness)
-#         image = cv2.line(im, left_points[1], left_points[2], color, thickness)
-#         image = cv2.line(im, left_points[2], left_points[3], color, thickness)
-#         image = cv2.line(im, left_points[3], left_points[0], color, thickness)
-#     
-#         right_points = [(440,280), (640,280), (640,345), (440,345)]
-#         color = (0, 255, 255)
-#         thickness = 4
-#         image = cv2.line(im, right_points[0], right_points[1], color, thickness)
-#         image = cv2.line(im, right_points[1], right_points[2], color, thickness)
-#         image = cv2.line(im, right_points[2], right_points[3], color, thickness)
-#         image = cv2.line(im, right_points[3], right_points[0], color, thickness)
+        left_points = [(0,280), (200,280), (200,345), (0,345)] #Displaying left wall subimage rectangle (for troubleshooting)
+        color = (0, 255, 255)
+        thickness = 4
+        image = cv2.line(im, left_points[0], left_points[1], color, thickness)
+        image = cv2.line(im, left_points[1], left_points[2], color, thickness)
+        image = cv2.line(im, left_points[2], left_points[3], color, thickness)
+        image = cv2.line(im, left_points[3], left_points[0], color, thickness)
+    
+        right_points = [(440,280), (640,280), (640,345), (440,345)] #Displaying right wall subimage rectangle (for troubleshooting)
+        color = (0, 255, 255)
+        thickness = 4
+        image = cv2.line(im, right_points[0], right_points[1], color, thickness)
+        image = cv2.line(im, right_points[1], right_points[2], color, thickness)
+        image = cv2.line(im, right_points[2], right_points[3], color, thickness)
+        image = cv2.line(im, right_points[3], right_points[0], color, thickness)
         
-        floor_points = [(180,425), (480,425), (480,465), (180,465)]
+        floor_points = [(180,425), (480,425), (480,465), (180,465)] #Displaying floor subimage rectangle (for troubleshooting)
         color = (255, 0, 0)
         thickness = 4
         image = cv2.line(im, floor_points[0], floor_points[1], color, thickness)
@@ -123,7 +130,7 @@ if __name__ == '__main__':
         image = cv2.line(im, floor_points[2], floor_points[3], color, thickness)
         image = cv2.line(im, floor_points[3], floor_points[0], color, thickness)
         
-        pillar_points = [(70, 218), (590, 218), (590, 420), (70, 420)]
+        pillar_points = [(70, 218), (590, 218), (590, 420), (70, 420)] #Displaying pillar subimage rectangle (for troubleshooting)
         color = (0, 255, 255)
         thickness = 4
         image = cv2.line(im, pillar_points[0], pillar_points[1], color, thickness)
@@ -140,7 +147,6 @@ if __name__ == '__main__':
                 leftarea = cv2.contourArea(cnt)
                 leftcontourindex = i
         if(leftarea > 0): 
-#             print('Left wall: ',leftarea) #Displaying left contour area
             cv2.drawContours(subim, contours, i, (0, 255, 0), 2) #drawing left largest contour
             displayLeftArea = str(int(leftarea))
 #             cv2.putText(im, displayLeftArea, (7, 250), font, 1, (100, 255, 0), 3, cv2.LINE_AA)
@@ -155,11 +161,9 @@ if __name__ == '__main__':
                 rightarea = cv2.contourArea(cnt2)
                 rightcontourindex = i 
         if(rightarea > 0):
-#             print('Right Wall: ',rightarea) #displaying right contour area
             cv2.drawContours(subim2, contours2, i, (0, 255, 0), 2) #drawing largest right contour
             displayRightArea = str(int(rightarea))
 #             cv2.putText(im, displayRightArea, (550, 250), font, 1, (100, 255, 0), 3, cv2.LINE_AA)
-#         cv2.imshow("contours2", im)
         
         #Orange Line
         line_hsv = cv2.cvtColor(subim3, cv2.COLOR_BGR2HSV) #Converting floor subimage to HSV
@@ -177,11 +181,11 @@ if __name__ == '__main__':
                 orangecontourindex = i
          
         cv2.drawContours(subim3, orangeContours, i, (0, 255, 0), 2) #drawing largest orange contour
-#         displayOrangeArea = str(int(orangearea))
+        displayOrangeArea = str(int(orangearea))
 #         cv2.putText(im, displayOrangeArea, (260, 320), font, 2, (100, 255, 0), 3, cv2.LINE_AA) #Displaying orange line area on screen
         
         #Pillar Contours
-        pillar_hsv = cv2.cvtColor(pillar_subim, cv2.COLOR_BGR2HSV)
+        pillar_hsv = cv2.cvtColor(pillar_subim, cv2.COLOR_BGR2HSV) #Converting pillar subimage to HSV
         
         #Red
         lower_red = np.array([160, 181, 100]) #Lower threshold for red colour
@@ -199,14 +203,10 @@ if __name__ == '__main__':
         if(red_area > 50):
             cv2.drawContours(pillar_subim, redContours, i, (0, 255, 0), 2) #drawing red largest contour
             approx=cv2.approxPolyDP(cnt4, 0.01*cv2.arcLength(cnt4,True),True)
-            x,y,w,h=cv2.boundingRect(approx)
-            cv2.rectangle(pillar_subim,(x,y),(x+w,y+h),(235, 206, 135),2)
+            x,y,w,h=cv2.boundingRect(approx) #Approximating rectangle around pillar contours
+            cv2.rectangle(pillar_subim,(x,y),(x+w,y+h),(235, 206, 135),2) #Drawing approximated rectangle around pillar contours
             
-            red_y = y
-            red_x = x
-            
-            print("Red Y:", red_y)
-            print("Red X:", red_x)
+            red_x = x #x coordinate for red pillars
         
         #Green
         lower_green = np.array([66, 92, 68]) #Lower threshold for green colour
@@ -215,9 +215,9 @@ if __name__ == '__main__':
         
         lower_green = np.array([54, 92, 68]) #Lower threshold for green colour
         upper_green = np.array([86, 255, 255]) #Upper threshold for green colour 
-        green_mask2 = cv2.inRange(pillar_hsv, lower_green, upper_green) #Green mask
+        green_mask2 = cv2.inRange(pillar_hsv, lower_green, upper_green) #Second Green mask
         
-        full_green_mask = green_mask | green_mask2
+        full_green_mask = green_mask | green_mask2 #Combining green masks
         
         greenContours = cv2.findContours(full_green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         
@@ -230,27 +230,27 @@ if __name__ == '__main__':
         if(green_area > 50):
             cv2.drawContours(pillar_subim, greenContours, i, (0, 255, 0), 2) #drawing green largest contour
             approx2=cv2.approxPolyDP(cnt5, 0.01*cv2.arcLength(cnt5,True),True)
-            x2,y2,w2,h2=cv2.boundingRect(approx2)
-            cv2.rectangle(pillar_subim,(x2,y2),(x2+w2,y2+h2),(255, 0, 0),2)
+            x2,y2,w2,h2=cv2.boundingRect(approx2) #Approximating rectangle around pillar contours
+            cv2.rectangle(pillar_subim,(x2,y2),(x2+w2,y2+h2),(255, 0, 0),2) #Drawing approximated rectangle around pillar contours
             
-            green_y = y2
-            green_x = x2
+            green_x = x2 #x coordinate for green pillars
         
-            print("Green Y:", green_y)
-            print("Green X:", green_x)
-        
-#         print("TURN COUNT:", count)
-#         print("Turning?:", turning)
-#         print("Turn Direction:", turnDirection)
+        #Displaying information for troubleshooting
+        print("Red X:", red_x)
+        print("Green X:", green_x)
+        print("TURN COUNT:", count)
+        print("Turning?:", turning)
+        print("Turn Direction:", turnDirection)
         print("turn counts:", turn_around_count)
-
-
         print("Green Area:", green_area)
         print("Red Area:", red_area)
+        print("Last Pillar?:", last_pillar)
+        print("difference is:", difference)
+        print("Steering angle is:", angle)
         
         displayTurnCount = str(int(count))
-        cv2.putText(im, displayTurnCount, (560, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
-        cv2.putText(im, displayTurning, (7, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
+        cv2.putText(im, displayTurnCount, (560, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA) #Displaying turn count on screen
+        cv2.putText(im, displayTurning, (7, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA) #Displaying vehicle status on screen
         
         if orangearea > 700: #Orange line is seen
             orange_seen = True
@@ -263,20 +263,18 @@ if __name__ == '__main__':
             timer = 0
                 
         if green_area > 700:
-            if green_area > red_area:
+            if green_area > red_area: #Ensuring that the front-most pillar is detected only
                 green_pillar_seen = True
-                print("Last Pillar?:", last_pillar)
-                PD = False
+                PD = False #Deactivating PD Controller
                 last_pillar = 'green'
         else:
             green_pillar_seen = False
             PD = True
             
         if red_area > 700:
-            if red_area > green_area:
+            if red_area > green_area: #Ensuring that the front-most pillar is detected only
                 red_pillar_seen = True
-                PD = False
-                print("Last Pillar?:", last_pillar)
+                PD = False #Deactivating PD Controller
                 last_pillar = 'red'
         else:
             red_pillar_seen = False
@@ -287,25 +285,20 @@ if __name__ == '__main__':
             PD = False
             print("Green Pillar Maneuvering")
             displayTurning = 'Green Pillar'
-#             print("difference is:", difference)
-#             print("angle is:", angle)
-            difference = -(green_x - 540)
+            difference = -(green_x - 540) #540 is target x position for green pillars
             correction = 2 * difference + 0.001 * (difference - lastdifference)
             angle = 85.045 + correction
             
-            if angle > 120:
+            if angle > 120: #Ensures that servo stays within safe limits for turning left
                 angle = 120
-            elif angle < 40:
+            elif angle < 40: #Ensures that servo stays within safe limits for turning right
                 angle = 40
             
             pw = int(11.1 * angle + 500)
             Board.setPWMServoPulse(1, pw, 1)
             lastdifference = difference
     
-#             Board.RGB.setPixelColor(0, Board.PixelColor(0, 255, 0))
-#             Board.RGB.show()
-            
-            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 255, 0)) #Shows Green LED when detecting green pillar
             Board.RGB.show()
             
         if red_pillar_seen == True:
@@ -313,26 +306,20 @@ if __name__ == '__main__':
             PD = False
             print("Red Pillar Maneuvering")
             displayTurning = 'Red Pillar'
-            print("difference is:", difference)
-            print("last difference is:", lastdifference)
-            print("angle is:", angle)
-            difference = -abs(int(red_x - 120))
+            difference = -abs(int(red_x - 120)) #120 is target x position for red pillars
             correction = 2 * difference + 0.001 * (difference - lastdifference)
             angle = 85.045 + correction
             
-            if angle > 120:
+            if angle > 120: #Ensures that servo stays within safe limits for turning left
                 angle = 120
-            elif angle < 40:
+            elif angle < 40: #Ensures that servo stays within safe limits for turning right
                 angle = 40
             
             pw = int(11.1 * angle + 500)
             Board.setPWMServoPulse(1, pw, 1)
             lastdifference = difference
             
-#             Board.RGB.setPixelColor(0, Board.PixelColor(255, 0, 0))
-#             Board.RGB.show()
-            
-            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.setPixelColor(0, Board.PixelColor(255, 0, 0)) #Shows Red LED when detecting green pillar
             Board.RGB.show()
             
         if not turning and green_pillar_seen == False and red_pillar_seen == False: 
@@ -346,32 +333,27 @@ if __name__ == '__main__':
                 turnDirection = 'right'
                 print("TURNING RIGHT")
 
-        if turnDirection == 'left' and turning == True:
+        if turnDirection == 'left' and turning == True: #Turning Left
             Board.setPWMServoPulse(1,1832, 1)
             PD = False
-            frames += 1
-            print("frames:",frames)
             displayTurning = 'Turning Left'
             
-            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0)) #Turns off LED for turning
             Board.RGB.show()
                 
-        elif turnDirection == 'right' and turning == True:
+        elif turnDirection == 'right' and turning == True: #Turning right
             Board.setPWMServoPulse(1,955, 1)
             PD = False
-            frames += 1
-            print("frames:",frames)
             displayTurning = 'Turning Right'
             
-            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0)) #Turns off LED for turning
             Board.RGB.show()
         
-        if turning == True and leftarea > 250 and rightarea > 250:
+        if turning == True and leftarea > 250 and rightarea > 250: #Detects both walls again after turn is complete
             turning = False
             turnDirection = None
             PD = True
             lastdifference = 0
-        
         
         if not turning and turnDirection == None and PD == True:
             #PD CONTROLLER 
@@ -381,28 +363,26 @@ if __name__ == '__main__':
             correction = 0.5 * difference + 0.001 * (difference - lastdifference)
             angle = 85.045 + correction
             
-            if angle > 120:
+            if angle > 120: #Ensures that servo stays within safe limits for turning left
                 angle = 120
-            elif angle < 40:
+            elif angle < 40: #Ensures that servo stays within safe limits for turning right
                 angle = 40
             
             pw = int(11.1 * angle + 500)
             Board.setPWMServoPulse(1, pw, 1)
             lastdifference = difference
             
-#             Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 255))
-#             Board.RGB.show()
-            
-            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 255)) #Shows Blue LED when PD Control is active
             Board.RGB.show()
         
-        if last_pillar == 'red' and turn_around_count == 1 and red_area > 300:
+        if last_pillar == 'red' and turn_around_count == 1 and red_area > 300: #Reverse direction
             turn_around = True
             
         if turn_around == True:
             turn_around_frames += 1
             
-            if turn_around_frames > 125 and turn_around == True:
+            if turn_around_frames > 125 and turn_around == True: #Ensures turn is at correct spot
+                #Three Point Turn
                 Board.setPWMServoPulse(5,1322,10)
                 time.sleep(1)
                 Board.setPWMServoPulse(1, 1830, 1)
@@ -436,7 +416,7 @@ if __name__ == '__main__':
             
                 break #exiting loop 
         
-        if len(sys.argv) > 1 and sys.argv[1] == 'Debug': #Debug mode
+        if len(sys.argv) > 1 and sys.argv[1] == 'Debug': #Debug mode for troubleshooting
             cv2.imshow('contours2', im)
         
             if cv2.waitKey(1)==ord('q'):
