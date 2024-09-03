@@ -43,50 +43,66 @@ This repository contains the engineering process of Team French Fries' self-driv
 ## Code Overview
 Both the code for Open Challenge and Obstacle Challenge follow similar sequential program logic, with the key differences being in their main loop. The general program structure for these two challenges is as follows:
 
-1. Initializing Variables
-   * Initializes variables responsible for turning, image processing, troubleshooting, turn/lap counting, and contour detection 
-2. Servo/Motor Setup
-   * Straightening car tires and preparing motor
-3. Camera Setup
-   * Setting camera resolution and framerate for capturing image
-4. Push Button Start
-   * Waits until a push button is pressed before starting the main loop (uses a white LED as a ready indicator)
-5. Main Loop (See below sections)
+__1. Initializing Variables__
+   * Initializes variables responsible for turning, image processing, troubleshooting, turn/lap counting, and contour detection
+ 
+__2. Servo/Motor Setup__
+   * Straightening car tires and preparing/calibrating motor
 
-To program our self-driving car's "vision" and camera operations, our team utilized OpenCV. Other libraries we used include: Time for programming delays; PiCamera2 for controlling our camera; RPi.GPIO for push button start; numpy for image processing; and HiwonderSDK for operating our Raspberry Pi Hat. 
+__3. Camera Setup__
+   * Setting camera resolution and framerate (30 fps) for capturing image
+
+__4. Push Button Start__
+   * Waits until a push button is pressed before starting the main loop (uses a LED as a ready indicator)
+
+__5. Main Loop (See below sections)__
+
+To program our self-driving car's "vision" and camera operations, our team utilized __OpenCV2__. Other libraries we used include: __Time__ for programming delays; __PiCamera2__ for controlling our camera; __RPi.GPIO__ for push button start; __numpy__ for image processing; and __HiwonderSDK__ for operating our Raspberry Pi Hat. 
 
 ## Open Challenge Main Loop Overview 
 The main loop for Open Challenge can be broken down into 4 main sections:
 
 * __Image Processing & Contour Detection__
-   * First, the camera captures the left wall, right wall, and floor Region of Interest (ROI) subimages as arrays. For the left and right wall ROI, various image processes including grayscaling and thresholding are conducted to prepare for contour detection, a computer vision technique which detects the edges/boundaries of an object. Similarily, the floor ROI is prepared for contour detection through a BGR (Blue, Green, Red) to HSV (Hue, Saturation, Value) colour conversion, colour thresholds, and a colour mask. Following these processes, the right wall, left wall, and orange line contours are found, as well as their areas'. This information is instrumental in the following processes of the program.
+   * First, the camera captures the left wall, right wall, and floor Region of Interest (ROI) subimages as arrays. 
+   * For the left and right wall ROI, various image processes including grayscaling and thresholding are conducted to prepare for contour detection, a computer vision technique which detects the edges/boundaries of an object. 
+   * Similarily, the floor ROI is prepared for contour detection through a BGR (Blue, Green, Red) to HSV (Hue, Saturation, Value) colour conversion, colour thresholds, and a colour mask. 
+   * Following these processes, the right wall, left wall, and orange line contours are found, as well as their areas'. This information is instrumental in the following processes of the program.
 
 * __Wall Following__
-   * Our vehicle uses a Proportional-Derivative (PD) Controller, a simplified version of the common Proportional-Integral-Derivative (PID) controller. The proportional term of the controller produces outputs based on the current error between the system's desired position (the exact middle of the two walls) and its actual position. In our case, the error is calculated to be the difference in area between the left and right wall. If the difference in area is large (e.g the vehicle is next to the right wall), the controller will produce a strong output (e.g. turning sharply left). The derivative term of the controller measures the rate of change of the error to "predict the future". Using this information, it can "dampen" the system's response to reduce oscillations and overshoots. In our case, the derivative is calculated as the difference between the current error and the previous error.
+   * Our vehicle uses a Proportional-Derivative (PD) Controller, a simplified version of the common Proportional-Integral-Derivative (PID) controller. 
+   * The proportional term of the controller produces outputs based on the current error between the system's desired position (the exact middle of the two walls) and its actual position. In our case, the error is calculated to be the difference in area between the left and right wall. If the difference in area is large (e.g the vehicle is next to the right wall), the controller will produce a strong output (e.g. turning sharply left). 
+   * The derivative term of the controller measures the rate of change of the error to "predict the future". Using this information, it can "dampen" the system's response to reduce oscillations and overshoots. In our case, the derivative is calculated as the difference between the current error and the previous error.
 
 * __Vehicle Turning and Lap Counting__
-   * To turn, our vehicle uses the areas of the left and right wall. If it detects that the area of the right wall suddenly drops below a certain threshold, it will disable its PD controller and conduct a sharp right turn. Similarily, if the left wall's area drops below the threshold, it will turn sharply left. The turn will continue until the vehicle detects that both walls are again above a certain threshold. As a preventative measure, our program uses a "turn buffer" that ensures that the turn lasts for at least 7 frames before ending. This prevents unwanted disruptions to the turn. To count its turns, the vehicle uses the floor ROI to detect the orange line. If the vehicle detects the orange line, it will add to its turn counts. 
+   * To turn, our vehicle uses the areas of the left and right wall. If it detects that the area of the right wall suddenly drops below a certain threshold, it will disable its PD controller and conduct a sharp right turn. Similarily, if the left wall's area drops below the threshold, it will turn sharply left. The turn will continue until the vehicle detects that both walls are again above a certain threshold. 
+   * As a preventative measure, our program uses a "turn buffer" that ensures that the turn lasts for at least 7 frames before ending. This prevents unwanted disruptions to the turn. 
+   * To count its turns, the vehicle uses the floor ROI to detect the orange line. If the vehicle detects the orange line, it will add to its turn counts. 
 
 * __Program Termination__
-   * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for 85 frames/almost 3 seconds (to ensure it stops in the correct area) before stopping and exiting the main loop.
+   * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for a set amount of frames to ensure it ends in the correct area before stopping and exiting the main loop.
 
 ## Obstacle Challenge Main Loop Overview
 The main loop for Obstacle Challenge can be broken down into 6 main sections:
 
 * __Image Processing & Contour Detection__
-   * Similar to open challenge, the camera captures the left wall, right wall, and floor Region of Interest (ROI) subimages as arrays and conducts contour detection on them. With obstacle challenge, there is an additional pillar region of interest. In this subimage, red and green pillars are detected through contour detection after performing a HSV colour conversion and using colour masks. Additionally, we used an OpenCV2 function called boundingRect() to approximate a rectangle around the pillars. This gives us the x position of the pillar.
+   * Similar to open challenge, the camera captures the left wall, right wall, and floor Region of Interest (ROI) subimages as arrays and conducts contour detection on them. 
+   * With obstacle challenge, there is an additional pillar region of interest. In this subimage, red and green pillars are detected through contour detection after performing a HSV colour conversion and using colour masks. 
+   * Additionally, we used an OpenCV2 function called boundingRect() to approximate a rectangle around the pillars. This not only helps to identify the pillars during testing and troubleshooting, but also gives us the x position of the pillar.
 
 * __Pillar Maneuvering__
-   * Once we have the x position of the upcoming pillar, we applied a PD controller to navigate the vehicle to either the right side of a red pillar or the left side of a green pillar. To do so, we set a target x position for the pillars. For red pillars, our target x position is on the left side of the screen, as we want our vehicle to pass it on the right side. The opposite works for green pillars. We calculated the error in our PD controller to be the difference between the pillar's actual x position and our target x position. 
+   * Once we have the x position of the upcoming pillar, we applied a PD controller to navigate the vehicle to either the right side of a red pillar or the left side of a green pillar. To do so, we set a target x position for the pillars. For red pillars, our target x position is on the left side of the screen, as we want our vehicle to pass it on the right side. The opposite works for green pillars. 
+   * We calculated the error in our PD controller to be the difference between the pillar's actual x position and our target x position. 
 
 * __Wall Following__
    * If our vehicle does not detect any pillars and is not in a turn, it will use the same wall following logic as Open Challenge to navigate the course. 
 
 * __Vehicle Turning and Lap Counting__
-   * To turn, our vehicle also uses the same logic as Open Challenge, with the exception of the removal of our turn buffer. Since there may be a pillar directly after the turn, it is disadvantageous for our vehicle to continue its turn for a set amount of time, as it may need to quickly adjust its path to avoid a pillar. Furthermore, we continue to use the orange line to detect turns for Obstacle Challenge. 
+   * To turn, our vehicle also uses the same logic as Open Challenge, with the exception of the removal of our turn buffer. Since there may be a pillar directly after the turn, it is disadvantageous for our vehicle to continue its turn for a set amount of time, as it may need to quickly adjust its path to avoid a pillar. 
+   * We continue to use the orange line to detect turns for Obstacle Challenge. 
 
 * __Three Point Turn__
-   * If our vehicle detects the last pillar to be red after 2 laps, it will disengage its wall following, pillar detection, turn detection, and camera to follow a set procedure for a three point turn. After it has successfully reversed its direction, its processes will start again. 
+   * If our vehicle detects the last pillar to be red after 2 laps, it will disengage its wall following, pillar detection, turn detection, and camera to follow a set procedure for a three point turn. 
+   * After it has successfully reversed its direction, its processes will start again. 
 
 * __Program Termination__
    * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for a set amount of frames before stopping and exiting the main loop.
