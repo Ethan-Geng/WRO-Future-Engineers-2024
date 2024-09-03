@@ -96,7 +96,7 @@ The main loop for Open Challenge can be broken down into 4 main sections:
    * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for 85 frames/almost 3 seconds (to ensure it stops in the correct area) before stopping and exiting the main loop.
 
 ## Obstacle Challenge Main Loop Overview
-The main loop for Obstacle Challenge can be broken down into 5 main sections:
+The main loop for Obstacle Challenge can be broken down into 6 main sections:
 
 * __Image Processing & Contour Detection__
    * Similar to open challenge, the camera captures the left wall, right wall, and floor Region of Interest (ROI) subimages as arrays and conducts contour detection on them. With obstacle challenge, there is an additional pillar region of interest. In this subimage, red and green pillars are detected through contour detection after performing a HSV colour conversion and using colour masks. Additionally, we used an OpenCV2 function called boundingRect() to approximate a rectangle around the pillars. This gives us the x position of the pillar.
