@@ -97,8 +97,26 @@ The main loop for Open Challenge can be broken down into 4 main sections:
    * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for 85 frames/almost 3 seconds (to ensure it stops in the correct area) before stopping and exiting the main loop.
 
 ## Obstacle Challenge Main Loop Overview
-...   
+The main loop for Obstacle Challenge can be broken down into 5 main sections:
+
+* __Image Processing & Contour Detection__
+   * Similar to open challenge, the camera captures the left wall, right wall, and floor Region of Interest (ROI) subimages as arrays and conducts contour detection on them. With obstacle challenge, there is an additional pillar region of interest. In this subimage, red and green pillars are detected through contour detection after performing a HSV colour conversion and using colour masks. Additionally, we used an OpenCV2 function called boundingRect() to approximate a rectangle around the pillars. This gives us the x position of the pillar.
+
+* __Pillar Maneuvering__
+   * Once we have the x position of the upcoming pillar, we applied a PD controller to navigate the vehicle to either the right side of a red pillar or the left side of a green pillar. To do so, we set a target x position for the pillars. For red pillars, our target x position is on the left side of the screen, as we want our vehicle to pass it on the right side. The opposite works for green pillars. We calculated the error in our PD controller to be the difference between the pillar's actual x position and our target x position. 
+
+* __Wall Following__
+   * If our vehicle does not detect any pillars and is not in a turn, it will use the same wall following logic as Open Challenge to navigate the course. 
+
+* __Vehicle Turning and Lap Counting__
+   * To turn, our vehicle also uses the same logic as Open Challenge, with the exception of the removal of our turn buffer. Since there may be a pillar directly after the turn, it is disadvantageous for our vehicle to continue its turn for a set amount of time, as it may need to quickly adjust its path to avoid a pillar. Furthermore, we continue to use the orange line to detect turns for Obstacle Challenge. 
+
+* __Three Point Turn__
+   * If our vehicle detects the last pillar to be red after 2 laps, it will disengage its wall following, pillar detection, turn detection, and camera to follow a set procedure for a three point turn. After it has successfully reversed its direction, its processes will start again. 
+
+* __Program Termination__
+   * Once the vehicle detects that 12 turns, and therefore 3 laps, have been completed, it will continue for a set amount of frames before stopping and exiting the main loop.
 
 ## Building/Compiling/Uploading Process
-All code for open challenge and obstacle challenge was built using Python. Our programs are coded and saved directly onto our Raspberry Pi. 
+All code for open challenge and obstacle challenge was built using Python. Our programs are coded and saved directly onto our Raspberry Pi. To do so, we used an application called Real VNC to remotely access our Raspberry Pi's graphical desktop. 
 
