@@ -13,10 +13,16 @@ time.sleep(6)
 
 frames=0
 count=0
+turn_around_count = 0
 endFrames = 0
 
 turning = False
 turnDirection = None
+PD = False
+turnBuffer = False
+orange_seen = False
+
+timer = 0
 
 difference = 0
 lastdifference = 0
@@ -26,6 +32,13 @@ displayRightArea = 0
 displayOrangeArea = 0
 displayTurnCount = 0
 displayTurning = 'PD Controller'
+
+green_pillar_seen = False
+red_pillar_seen = False
+last_pillar = None
+
+turn_around = False
+turn_around_frames = 0
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -47,8 +60,8 @@ if __name__ == '__main__':
     Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
     Board.RGB.show()
     
-    # turn LED green
-    Board.RGB.setPixelColor(0, Board.PixelColor(0, 255, 0))
+    # turn LED white
+    Board.RGB.setPixelColor(0, Board.PixelColor(255, 255, 255))
     Board.RGB.show()
     time.sleep(1)
     
@@ -61,8 +74,10 @@ if __name__ == '__main__':
     
     angle = 85.045
     pw_Servo = angle * 11.1 + 500
-    Board.setPWMServoPulse(5,1322,100) #Speed
+    Board.setPWMServoPulse(5,1323,100) #Speed
     while True:
+        timer += 1
+        
         leftarea = 0
         leftcontourindex = 0
         rightarea = 0
@@ -81,34 +96,34 @@ if __name__ == '__main__':
         
         subim=im[280:345,0:200] #Setting left wall detection area
         subim2=im[280:345,440:640] #Setting right wall detection area
-        subim3=im[365:410,180:480] #Setting orange line detection area
-        pillar_subim = im[218:420, 130:515]
+        subim3=im[425:465,180:480] #Setting orange line detection area
+        pillar_subim = im[218:420,70:590]
     
-        left_points = [(0,280), (200,280), (200,345), (0,345)]
-        color = (0, 255, 255)
-        thickness = 4
-        image = cv2.line(im, left_points[0], left_points[1], color, thickness)
-        image = cv2.line(im, left_points[1], left_points[2], color, thickness)
-        image = cv2.line(im, left_points[2], left_points[3], color, thickness)
-        image = cv2.line(im, left_points[3], left_points[0], color, thickness)
-    
-        right_points = [(440,280), (640,280), (640,345), (440,345)]
-        color = (0, 255, 255)
-        thickness = 4
-        image = cv2.line(im, right_points[0], right_points[1], color, thickness)
-        image = cv2.line(im, right_points[1], right_points[2], color, thickness)
-        image = cv2.line(im, right_points[2], right_points[3], color, thickness)
-        image = cv2.line(im, right_points[3], right_points[0], color, thickness)
+#         left_points = [(0,280), (200,280), (200,345), (0,345)]
+#         color = (0, 255, 255)
+#         thickness = 4
+#         image = cv2.line(im, left_points[0], left_points[1], color, thickness)
+#         image = cv2.line(im, left_points[1], left_points[2], color, thickness)
+#         image = cv2.line(im, left_points[2], left_points[3], color, thickness)
+#         image = cv2.line(im, left_points[3], left_points[0], color, thickness)
+#     
+#         right_points = [(440,280), (640,280), (640,345), (440,345)]
+#         color = (0, 255, 255)
+#         thickness = 4
+#         image = cv2.line(im, right_points[0], right_points[1], color, thickness)
+#         image = cv2.line(im, right_points[1], right_points[2], color, thickness)
+#         image = cv2.line(im, right_points[2], right_points[3], color, thickness)
+#         image = cv2.line(im, right_points[3], right_points[0], color, thickness)
         
-        floor_points = [(150,365), (500,365), (500,410), (150,410)]
-        color = (0, 0, 255)
+        floor_points = [(180,425), (480,425), (480,465), (180,465)]
+        color = (255, 0, 0)
         thickness = 4
         image = cv2.line(im, floor_points[0], floor_points[1], color, thickness)
         image = cv2.line(im, floor_points[1], floor_points[2], color, thickness)
         image = cv2.line(im, floor_points[2], floor_points[3], color, thickness)
         image = cv2.line(im, floor_points[3], floor_points[0], color, thickness)
         
-        pillar_points = [(130, 218), (515, 218), (515, 420), (130, 420)]
+        pillar_points = [(70, 218), (590, 218), (590, 420), (70, 420)]
         color = (0, 255, 255)
         thickness = 4
         image = cv2.line(im, pillar_points[0], pillar_points[1], color, thickness)
@@ -128,7 +143,7 @@ if __name__ == '__main__':
 #             print('Left wall: ',leftarea) #Displaying left contour area
             cv2.drawContours(subim, contours, i, (0, 255, 0), 2) #drawing left largest contour
             displayLeftArea = str(int(leftarea))
-            cv2.putText(im, displayLeftArea, (7, 250), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
+#             cv2.putText(im, displayLeftArea, (7, 250), font, 1, (100, 255, 0), 3, cv2.LINE_AA)
     
         #Right Wall
         imgGray2 = cv2.cvtColor(subim2, cv2.COLOR_BGR2GRAY) #Grayscaling preperation
@@ -143,11 +158,11 @@ if __name__ == '__main__':
 #             print('Right Wall: ',rightarea) #displaying right contour area
             cv2.drawContours(subim2, contours2, i, (0, 255, 0), 2) #drawing largest right contour
             displayRightArea = str(int(rightarea))
-            cv2.putText(im, displayRightArea, (450, 250), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
+#             cv2.putText(im, displayRightArea, (550, 250), font, 1, (100, 255, 0), 3, cv2.LINE_AA)
 #         cv2.imshow("contours2", im)
         
         #Orange Line
-        line_hsv = cv2.cvtColor(subim3, cv2.COLOR_BGR2HSV)
+        line_hsv = cv2.cvtColor(subim3, cv2.COLOR_BGR2HSV) #Converting floor subimage to HSV
 
         lower_orange = np.array([0, 111, 152]) #Lower threshold for orange colour
         upper_orange = np.array([56, 255, 255]) #Upper threshold for orange colour 
@@ -161,17 +176,15 @@ if __name__ == '__main__':
                 orangearea = cv2.contourArea(cnt3)
                 orangecontourindex = i
          
-        cv2.drawContours(subim3, orangeContours, i, (0, 255, 0), 2) #drawing orange largest contour
-        displayOrangeArea = str(int(orangearea))
-#         cv2.putText(im, displayOrangeArea, (300, 300), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
-        
-#         print("Orange Area:", orangearea)
+        cv2.drawContours(subim3, orangeContours, i, (0, 255, 0), 2) #drawing largest orange contour
+#         displayOrangeArea = str(int(orangearea))
+#         cv2.putText(im, displayOrangeArea, (260, 320), font, 2, (100, 255, 0), 3, cv2.LINE_AA) #Displaying orange line area on screen
         
         #Pillar Contours
-        pillar_hsv = cv2.cvtColor(subim3, cv2.COLOR_BGR2HSV)
+        pillar_hsv = cv2.cvtColor(pillar_subim, cv2.COLOR_BGR2HSV)
         
         #Red
-        lower_red = np.array([160, 156, 79]) #Lower threshold for red colour
+        lower_red = np.array([160, 181, 100]) #Lower threshold for red colour
         upper_red = np.array([180, 255, 255]) #Upper threshold for red colour 
         red_mask = cv2.inRange(pillar_hsv, lower_red, upper_red) #Red mask
         
@@ -183,7 +196,7 @@ if __name__ == '__main__':
                 red_area = cv2.contourArea(cnt4)
                 red_contour_index = i
                 
-        if(red_area > 0):
+        if(red_area > 50):
             cv2.drawContours(pillar_subim, redContours, i, (0, 255, 0), 2) #drawing red largest contour
             approx=cv2.approxPolyDP(cnt4, 0.01*cv2.arcLength(cnt4,True),True)
             x,y,w,h=cv2.boundingRect(approx)
@@ -194,14 +207,19 @@ if __name__ == '__main__':
             
             print("Red Y:", red_y)
             print("Red X:", red_x)
-            print("Red Area:", red_area)
         
         #Green
-        lower_green = np.array([43, 111, 64]) #Lower threshold for green colour
-        upper_green = np.array([111, 255, 255]) #Upper threshold for green colour 
+        lower_green = np.array([66, 92, 68]) #Lower threshold for green colour
+        upper_green = np.array([86, 255, 255]) #Upper threshold for green colour 
         green_mask = cv2.inRange(pillar_hsv, lower_green, upper_green) #Green mask
         
-        greenContours = cv2.findContours(green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+        lower_green = np.array([54, 92, 68]) #Lower threshold for green colour
+        upper_green = np.array([86, 255, 255]) #Upper threshold for green colour 
+        green_mask2 = cv2.inRange(pillar_hsv, lower_green, upper_green) #Green mask
+        
+        full_green_mask = green_mask | green_mask2
+        
+        greenContours = cv2.findContours(full_green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         
         for i in range(len(greenContours)): #finding largest green contour
             cnt5 = greenContours[i]
@@ -209,34 +227,115 @@ if __name__ == '__main__':
                 green_area = cv2.contourArea(cnt5)
                 green_contour_index = i
                 
-        if(green_area > 0):
+        if(green_area > 50):
             cv2.drawContours(pillar_subim, greenContours, i, (0, 255, 0), 2) #drawing green largest contour
             approx2=cv2.approxPolyDP(cnt5, 0.01*cv2.arcLength(cnt5,True),True)
             x2,y2,w2,h2=cv2.boundingRect(approx2)
-            cv2.rectangle(pillar_subim,(x2,y2),(x2+w2,y2+h2),(235, 206, 135),2)
+            cv2.rectangle(pillar_subim,(x2,y2),(x2+w2,y2+h2),(255, 0, 0),2)
             
             green_y = y2
             green_x = x2
         
             print("Green Y:", green_y)
             print("Green X:", green_x)
-            print("Green Area:", green_area)
         
 #         print("TURN COUNT:", count)
 #         print("Turning?:", turning)
 #         print("Turn Direction:", turnDirection)
+        print("turn counts:", turn_around_count)
+
+
+        print("Green Area:", green_area)
+        print("Red Area:", red_area)
         
         displayTurnCount = str(int(count))
         cv2.putText(im, displayTurnCount, (560, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
         cv2.putText(im, displayTurning, (7, 60), font, 2, (100, 255, 0), 3, cv2.LINE_AA)
         
-        if orangearea > 700:
-            frames += 1
-            if frames>45:
-                count+=1
-                frames=0
-        
-        if not turning: 
+        if orangearea > 700: #Orange line is seen
+            orange_seen = True
+            timer = 0
+            
+        if orange_seen == True and (timer//30 > 0.5): #Timer to ensure line is not counted more than once
+            count+=1
+            turn_around_count +=1
+            orange_seen = False
+            timer = 0
+                
+        if green_area > 700:
+            if green_area > red_area:
+                green_pillar_seen = True
+                print("Last Pillar?:", last_pillar)
+                PD = False
+                last_pillar = 'green'
+        else:
+            green_pillar_seen = False
+            PD = True
+            
+        if red_area > 700:
+            if red_area > green_area:
+                red_pillar_seen = True
+                PD = False
+                print("Last Pillar?:", last_pillar)
+                last_pillar = 'red'
+        else:
+            red_pillar_seen = False
+            PD = True
+            
+        if green_pillar_seen == True:
+            #Green Pillar Maneuvering
+            PD = False
+            print("Green Pillar Maneuvering")
+            displayTurning = 'Green Pillar'
+#             print("difference is:", difference)
+#             print("angle is:", angle)
+            difference = -(green_x - 540)
+            correction = 2 * difference + 0.001 * (difference - lastdifference)
+            angle = 85.045 + correction
+            
+            if angle > 120:
+                angle = 120
+            elif angle < 40:
+                angle = 40
+            
+            pw = int(11.1 * angle + 500)
+            Board.setPWMServoPulse(1, pw, 1)
+            lastdifference = difference
+    
+#             Board.RGB.setPixelColor(0, Board.PixelColor(0, 255, 0))
+#             Board.RGB.show()
+            
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.show()
+            
+        if red_pillar_seen == True:
+            #Red Pillar Maneuvering
+            PD = False
+            print("Red Pillar Maneuvering")
+            displayTurning = 'Red Pillar'
+            print("difference is:", difference)
+            print("last difference is:", lastdifference)
+            print("angle is:", angle)
+            difference = -abs(int(red_x - 120))
+            correction = 2 * difference + 0.001 * (difference - lastdifference)
+            angle = 85.045 + correction
+            
+            if angle > 120:
+                angle = 120
+            elif angle < 40:
+                angle = 40
+            
+            pw = int(11.1 * angle + 500)
+            Board.setPWMServoPulse(1, pw, 1)
+            lastdifference = difference
+            
+#             Board.RGB.setPixelColor(0, Board.PixelColor(255, 0, 0))
+#             Board.RGB.show()
+            
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.show()
+            
+        if not turning and green_pillar_seen == False and red_pillar_seen == False: 
             if leftarea < 100: #Sharp turn left
                 turning = True
                 turnDirection = 'left'
@@ -249,33 +348,37 @@ if __name__ == '__main__':
 
         if turnDirection == 'left' and turning == True:
             Board.setPWMServoPulse(1,1832, 1)
+            PD = False
             frames += 1
             print("frames:",frames)
             displayTurning = 'Turning Left'
-#             if frames>35:
-#                 count+=1
-#                 frames=0
+            
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.show()
                 
         elif turnDirection == 'right' and turning == True:
             Board.setPWMServoPulse(1,955, 1)
+            PD = False
             frames += 1
             print("frames:",frames)
             displayTurning = 'Turning Right'
-#             if frames>35:
-#                 count+=1
-#                 frames=0
+            
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.show()
         
         if turning == True and leftarea > 250 and rightarea > 250:
             turning = False
             turnDirection = None
+            PD = True
             lastdifference = 0
-            
-        if not turning and turnDirection == None:
+        
+        
+        if not turning and turnDirection == None and PD == True:
             #PD CONTROLLER 
             print("PD ACTIVATED")
             displayTurning = 'PD Controller'
             difference = rightarea - leftarea
-            correction = 0.005 * difference + 0.001 * (difference - lastdifference)
+            correction = 0.5 * difference + 0.001 * (difference - lastdifference)
             angle = 85.045 + correction
             
             if angle > 120:
@@ -286,13 +389,51 @@ if __name__ == '__main__':
             pw = int(11.1 * angle + 500)
             Board.setPWMServoPulse(1, pw, 1)
             lastdifference = difference
-    
+            
+#             Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 255))
+#             Board.RGB.show()
+            
+            Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+            Board.RGB.show()
+        
+        if last_pillar == 'red' and turn_around_count == 1 and red_area > 300:
+            turn_around = True
+            
+        if turn_around == True:
+            turn_around_frames += 1
+            
+            if turn_around_frames > 125 and turn_around == True:
+                Board.setPWMServoPulse(5,1322,10)
+                time.sleep(1)
+                Board.setPWMServoPulse(1, 1830, 1)
+                time.sleep(1)
+                Board.setPWMServoPulse(1, 944, 1)
+                time.sleep(0.5)
+                Board.setPWMServoPulse(5,1595,1)
+                time.sleep(2)
+                Board.setPWMServoPulse(5,1500,1)
+                time.sleep(0.1)
+                Board.setPWMServoPulse(1, 1832, 1)
+                time.sleep(1)
+                Board.setPWMServoPulse(5,1325,1)
+                time.sleep(0.8)
+                
+                turn_around_count +=1
+                turn_around = False
+                turn_around_frames = 0
+                Board.setPWMServoPulse(5,1323,1)
+                
+                
         if count>=12: #all turns have been completed
             endFrames+=1
             
-            if endFrames > 85: #counting frames to ensure robot ends in correct place
+            if endFrames > 65: #counting frames to ensure robot ends in correct place
                 Board.setPWMServoPulse(5,1500,100) #Stopping the motor
                 Board.setPWMServoPulse(1,1500,100) #Straightening wheels
+                
+                Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
+                Board.RGB.show()
+            
                 break #exiting loop 
         
         if len(sys.argv) > 1 and sys.argv[1] == 'Debug': #Debug mode
